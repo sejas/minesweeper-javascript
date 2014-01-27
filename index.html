@@ -12,6 +12,8 @@
     "O O O O O O O O O O\n"+
     "O O O O O X O O O O\n";
 
+    var entrada = "BMC_TEST_INPUT_MAGIC";
+
     function MinasConstructor (entrada) {
         // Inicializamos la primera columna.
         this.entrada = entrada;
@@ -94,7 +96,7 @@
     var minas = new MinasConstructor(entrada);
     minas.transformar();
     minas.procesar();
-    // Enseñamos 
+    // Mostramos por consola la matriz en formato String 
     console.log(minas.mostrar());
 
 
