@@ -12,91 +12,91 @@
     "O O O O O O O O O O\n"+
     "O O O O O X O O O O\n";
 
+    function MinasConstructor (entrada) {
+        // Inicializamos la primera columna.
+        this.entrada = entrada;
+        this.minasResultado = {0:{}};
+        this.columnas = 0;
+        this.filas = 0;   
 
-
-   var minas = {
+        this.init = function  () {
+         // calcula el numero de elementos por columna
+         this.columnas = this.encontrarColumnas(entrada);
+         this.filas = this.encontrarFilas(entrada,this.columnas);   
+        }
         // Busca la cantidad de elementos por Columna.
-        //Dividimos entre dos por los espacios en blanco.
-        encontrarColumnas: function  (entrada) {
+        this.encontrarColumnas = function  (entrada) {
             return Math.round(entrada.indexOf("\n")/2);
-        },
-        encontrarFilas: function  (entrada,ancho) {
+        };
+        this.encontrarFilas = function  (entrada,ancho) {
+            //Dividimos entre dos por los espacios en blanco.
             return entrada.length/2/ancho;
-        },
-        incrementarVecinos: function  (unaMatriz,iElemento,jElemento) {
-            console.log('inicio: '+iElemento+','+jElemento);
-            // Recorremos la matriz 3x3 con centro en i,j, incrementando en 1 a sus vecinos.
-            //Sólo incrementamos si existe el elemento en la Matriz y si el elmento no es una mina ("X")
+        };
+        // Pasa del string de entrada a la matriz minasResultado
+        // Para facilitar la logica del procesamiento
+        this.transformar = function  () {
+            var filai = 0;
+            var columnai = 0;
+            // Cambiamos de formato a array.
+            for (var i = 0; i < this.entrada.length; i+=2) {
+                if(columnai == this.columnas){
+                    // Hemos llegado al final de la columna.
+                    //Incrementamos la fila y creamos el siguiente objeto fila
+                    columnai = 0;
+                    filai ++;            
+                    this.minasResultado[filai] = {};
+                }
+                caracter =  entrada.charAt(i);
+                this.minasResultado[filai][columnai++] = ("X" != caracter)?0:"X";
+            };
+        }
+        this.procesar = function  () {
+            // Una vez transformado a una matriz, lo recorremos e incrementamos facilmente.
+            for (var i = 0; i < this.filas; i++) {
+                for (var j = 0; j < this.columnas; j++) {
+                    if ("X" == this.minasResultado[i][j]){
+                        this.incrementarVecinos(this.minasResultado,i,j);
+                    }
+                };
+            };
+        }
+        // Recorremos la matriz 3x3 con centro en i,j, incrementando en 1 a sus vecinos.
+        this.incrementarVecinos = function  (unaMatriz,iElemento,jElemento) {
             for (var i = iElemento-1; i <= iElemento+1; i++) {
                 for (var j = jElemento-1; j <= jElemento+1; j++) {
-                    console.log('recorriendo: '+i+','+j);
-                    // Comprueba que el tipo de un elemento sea distinto a indefinido
-                    if (typeof minasResultado[i] !== "undefined" && typeof minasResultado[i][j] !== "undefined") {
-                        if ("X" != unaMatriz[i][j]) {
-                            unaMatriz[i][j]++;
-                            console.log('incrementando el elemento: '+i+','+j+' a: '+unaMatriz[i][j]);
+                    //Sólo incrementamos si existe el elemento en la Matriz y si el elmento no es una mina ("X")
+                    if (typeof this.minasResultado[i] !== "undefined" && typeof this.minasResultado[i][j] !== "undefined") {
+                        if ("X" != this.minasResultado[i][j]) {
+                            this.minasResultado[i][j]++;
                         }
                     }
                 }         
             }
-        },
-        // devuelve el array
-        mostrar: function  (unaMatriz) {
-            // Convertimos la matriz en string
+        };
+        // devuelve el array en formato string
+        this.mostrar = function  () {
             var cadena = '';
-            // el ultimo elemento de cada fila lleva un salto en blanco
+            // el ultimo elemento de cada fila lleva un salto en vez de blanco
             var espacio = ' '
-            for (var i = 0; i < filas; i++) {
-                for (var j = 0; j < columnas; j++) {
-                    espacio = (j == columnas-1)?"\n":" ";
-                    cadena += unaMatriz[i][j]+espacio;
+            for (var i = 0; i < this.filas; i++) {
+                for (var j = 0; j < this.columnas; j++) {
+                    espacio = (j == this.columnas-1)?"\n":" ";
+                    cadena += this.minasResultado[i][j]+espacio;
                 };
             }
-            console.log('cadena: ');
-            console.log(cadena);
-        }
-   }
-    // cantidad de caracteres por columna
-    var columnas = minas.encontrarColumnas(entrada);
-    var filas = minas.encontrarFilas(entrada,columnas);
-    console.log('cantidad de col: '+columnas);
-    console.log('cantidad de filas: '+filas);
-    // Inicializamos la primera columna.
-    var minasResultado = {0:{}};
-
-
-    // Variables de condicion
-    var filai = 0;
-    var columnai = 0;
-    // Cambiamos de formato a array.
-    for (var i = 0; i < entrada.length; i+=2) {
-        if(columnai == columnas){
-            // Hemos llegado al final de la columna.
-            //Incrementamos la fila y creamos el siguiente objeto fila
-            columnai = 0;
-            filai ++;            
-            minasResultado[filai] = {};
-        }
-        caracter =  entrada.charAt(i);
-        minasResultado[filai][columnai++] = ("X" != caracter)?0:"X";
-
-    };
-    console.log(minasResultado);
-    
-    // Una vez transformado a un array, lo recorremos e incrementamos facilmente.
-    for (var i = 0; i < filas; i++) {
-        for (var j = 0; j < columnas; j++) {
-            console.log(i+','+j+': '+minasResultado[i][j]);
-            if ("X" == minasResultado[i][j]){
-                minas.incrementarVecinos(minasResultado,i,j);
-            }
+            return cadena;
         };
-    };
 
-    minas.mostrar(minasResultado);
+        //Inicializamos el objeto
+        this.init();
+    }
 
+    var minas = new MinasConstructor(entrada);
+    minas.transformar();
+    minas.procesar();
+    // Enseñamos 
+    console.log(minas.mostrar());
 
-    // enseñar.
 
 
 </script>
