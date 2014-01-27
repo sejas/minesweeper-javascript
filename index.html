@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    var entrada = "O O O O X O O O O O\n"+
+    "X X O O O O O O X O\n"+
+    "O O O O O O O O O O\n"+
+    "O O O O O O O O O O\n"+
+    "O O O O O X O O O O\n";
+
+
+
+   var minas = {
+        // Busca la cantidad de elementos por Columna.
+        //Dividimos entre dos por los espacios en blanco.
+        encontrarColumnas: function  (entrada) {
+            return Math.round(entrada.indexOf("\n")/2);
+        },
+        encontrarFilas: function  (entrada,ancho) {
+            return entrada.length/2/ancho;
+        },
+        incrementarVecinos: function  (unaMatriz,iElemento,jElemento) {
+            console.log('inicio: '+iElemento+','+jElemento);
+            // Recorremos la matriz 3x3 con centro en i,j, incrementando en 1 a sus vecinos.
+            //Sólo incrementamos si existe el elemento en la Matriz y si el elmento no es una mina ("X")
+            for (var i = iElemento-1; i <= iElemento+1; i++) {
+                for (var j = jElemento-1; j <= jElemento+1; j++) {
+                    console.log('recorriendo: '+i+','+j);
+                    // Comprueba que el tipo de un elemento sea distinto a indefinido
+                    if (typeof minasResultado[i] !== "undefined" && typeof minasResultado[i][j] !== "undefined") {
+                        if ("X" != unaMatriz[i][j]) {
+                            unaMatriz[i][j]++;
+                            console.log('incrementando el elemento: '+i+','+j+' a: '+unaMatriz[i][j]);
+                        }
+                    }
+                }         
+            }
+        },
+        // devuelve el array
+        mostrar: function  (unaMatriz) {
+            // Convertimos la matriz en string
+            var cadena = '';
+            // el ultimo elemento de cada fila lleva un salto en blanco
+            var espacio = ' '
+            for (var i = 0; i < filas; i++) {
+                for (var j = 0; j < columnas; j++) {
+                    espacio = (j == columnas-1)?"\n":" ";
+                    cadena += unaMatriz[i][j]+espacio;
+                };
+            }
+            console.log('cadena: ');
+            console.log(cadena);
+        }
+   }
+    // cantidad de caracteres por columna
+    var columnas = minas.encontrarColumnas(entrada);
+    var filas = minas.encontrarFilas(entrada,columnas);
+    console.log('cantidad de col: '+columnas);
+    console.log('cantidad de filas: '+filas);
+    // Inicializamos la primera columna.
+    var minasResultado = {0:{}};
+
+
+    // Variables de condicion
+    var filai = 0;
+    var columnai = 0;
+    // Cambiamos de formato a array.
+    for (var i = 0; i < entrada.length; i+=2) {
+        if(columnai == columnas){
+            // Hemos llegado al final de la columna.
+            //Incrementamos la fila y creamos el siguiente objeto fila
+            columnai = 0;
+            filai ++;            
+            minasResultado[filai] = {};
+        }
+        caracter =  entrada.charAt(i);
+        minasResultado[filai][columnai++] = ("X" != caracter)?0:"X";
+
+    };
+    console.log(minasResultado);
+    
+    // Una vez transformado a un array, lo recorremos e incrementamos facilmente.
+    for (var i = 0; i < filas; i++) {
+        for (var j = 0; j < columnas; j++) {
+            console.log(i+','+j+': '+minasResultado[i][j]);
+            if ("X" == minasResultado[i][j]){
+                minas.incrementarVecinos(minasResultado,i,j);
+            }
+        };
+    };
+
+    minas.mostrar(minasResultado);
+
+
+    // enseñar.
+
+
+</script>
+
+
+
+
+
+
+</body>
+</html>
